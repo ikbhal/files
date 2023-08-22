@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Operations App</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>File Operations</h1>
+
+    <!-- Form for creating a file -->
+    <form id="createForm">
+      <h2>Create File</h2>
+      <input type="text" id="createFileName" placeholder="Enter file name" required />
+      <button type="submit">Create</button>
+    </form>
+
+    <!-- Form for updating a file -->
+    <form id="updateForm">
+      <h2>Update File</h2>
+      <p>Select file</p>
+      <select id="updateFileName" required></select>
+      <br/>
+      <textarea id="updateFileContent" placeholder="Enter file content" required cols="40" rows="5"></textarea>
+      <br/>
+      <button type="submit">Update</button>
+    </form>
+
+    <!-- List of files -->
+    <h2>List of Files</h2>
+    <table id="fileList" class="table">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    // ...
+    // (The JavaScript code provided in the previous response)
+    // ...
+  </script>
+</body>
+</html>
