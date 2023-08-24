@@ -143,19 +143,8 @@ app.get('/directories/files', (req, res) => {
 // path /directories/<directory>/files/<fileName>, put method
 app.put('/directories/files/:fileName', async (req, res) => {
   try {
-    const directoryName = req.body.directoryName;
-    let directoryPath = '';
-    if(directoryName === 'data') {
-      directoryPath = DATA_DIR;
-    } else {
-      directoryPath = path.join(DATA_DIR, directoryName);
-    }
-
-    // const directoryName = req.params.directoryName;
-    const fileName = req.params.fileName;
+    let filePath = getFilePath(req.body.directoryName, req.params.fileName);
     const fileContent = req.body.fileContent;
-    // const directoryPath = path.join(DATA_DIR, directoryName);
-    const filePath = path.join(directoryPath, fileName);
 
     fs.writeFile(filePath, fileContent, function(error) {
       if (error) {
@@ -166,7 +155,6 @@ app.put('/directories/files/:fileName', async (req, res) => {
           res.status(200).send('File saved successfully');
       }
   });
-
     
   } catch (error) {
     console.error('Error:', error);
