@@ -174,9 +174,10 @@ app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
 
 // get file content at directory name, relative to data folder
 // path /directories/<directory>/files/<fileName>, get method
-app.get('/directories/:directoryName/files/:fileName', async (req, res) => {
+app.get('/directories/files/:fileName', async (req, res) => {
+  // lets accept directory name in query string
   try {
-    const directoryName = req.params.directoryName;
+    const directoryName = req.query.directoryName;
     let directoryPath = '';
     if(directoryName === 'data') {
       directoryPath = DATA_DIR;

@@ -182,7 +182,7 @@
 
                 // Edit File
                 function editFile(directoryName, fileName) {
-                    $.get(`/directories/${directoryName}/files/${fileName}`, function (fileContent) {
+                    $.get(`/directories/files/${fileName}?directoryName=${directoryName}`, function (fileContent) {
                         const editForm = $("#editFileForm");
                         // clear form editFileform with jquery
                         editForm.empty();
