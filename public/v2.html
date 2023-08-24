@@ -19,6 +19,15 @@
 
     <div class="container mt-4">
         <div class="row">
+
+            <!-- //h2 edit form  -->
+            <div class="col-md-6">
+                <h2>Edit file form</h2>
+                <form id="createFolderForm">
+                   
+                </form>
+
+            </div>
             <div class="col-md-6">
                 <h2>Create Folder</h2>
                 <!-- Create Folder Form -->
@@ -175,10 +184,14 @@
                 function editFile(directoryName, fileName) {
                     $.get(`/directories/${directoryName}/files/${fileName}`, function (fileContent) {
                         const editForm = $("<form>").attr("id", "editFileForm");
+                        // create  file name text paragraph in jquery 
+                        const fileNameText = $("<p>").text("filename: " + fileName);
                         const contentTextarea = $("<textarea>")
                             .addClass("form-control mb-2")
                             .attr("rows", "5")
                             .val(fileContent);
+                        // create break element in jquery
+                        const breakElement = $("<br>");
                         const saveButton = $("<button>")
                             .addClass("btn btn-success")
                             .text("Save")
@@ -186,7 +199,7 @@
                                 saveFile(directoryName, fileName, contentTextarea.val());
                             });
 
-                        editForm.append(contentTextarea, saveButton);
+                        editForm.append(fileNameText,contentTextarea, breakElement, saveButton);
                         $("#fileListBody").after(editForm);
                     }).fail(function (error) {
                         alert("Error: " + error.responseText);
