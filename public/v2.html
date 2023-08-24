@@ -136,7 +136,7 @@
 
 
                 // load list of files, sub directory of given directory name or path
-                function loadList(directoryName) {
+                function loadFileList(directoryName) {
                     const apiUrl = '/directories/files';
 
                     $.get(apiUrl, { directoryName }, function (data) {
