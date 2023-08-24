@@ -19,11 +19,13 @@ const FILES_DIR = path.join(__dirname, 'data'); // Directory to store files
 
 // rename file api  accept old file name, new file name
 // todo fodler support
-app.put('/directories/:diretoryName/files/:oldfileName/rename/:newFileName', (req, res) => {
+app.put('/directories/files/:oldfileName/rename/:newFileName', (req, res) => {
+  //lets accept directory name in body 
+
   // read directory name path parameter, check if it is . then use data directory, else create directory path 
   // create oldfilepath from directory name, oldfilename
   // create newfilepath from directory name, new file name
-  const directoryName = req.params.directoryName;
+  const directoryName = req.body.directoryName;
   let directoryPath = '';
   if(directoryName === 'data') {
     directoryPath = DATA_DIR;
@@ -139,9 +141,9 @@ app.get('/directories/files', (req, res) => {
 
 // save file with content at directory name, relative to data folder
 // path /directories/<directory>/files/<fileName>, put method
-app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
+app.put('/directories/files/:fileName', async (req, res) => {
   try {
-    const directoryName = req.params.directoryName;
+    const directoryName = req.body.directoryName;
     let directoryPath = '';
     if(directoryName === 'data') {
       directoryPath = DATA_DIR;

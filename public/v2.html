@@ -211,10 +211,11 @@
 
                 // Save File
                 function saveFile(directoryName, fileName, fileContent) {
+
                     $.ajax({
-                        url: `/directories/${directoryName}/files/${fileName}`,
+                        url: `/directories/files/${fileName}`,
                         type: "PUT",
-                        data: JSON.stringify({ fileContent: fileContent }),
+                        data: JSON.stringify({ fileContent: fileContent, directoryName: directoryName }),
                         contentType: "application/json",
                         success: function () {
                             $("#editFileForm").remove();
