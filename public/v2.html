@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Management App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">File Management App</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Create Folder</h2>
+                <!-- Create Folder Form -->
+                <form id="createFolderForm">
+                    <input type="text" class="form-control mb-2" placeholder="Folder Name" required>
+                    <button type="submit" class="btn btn-primary">Create Folder</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <h2>Create File</h2>
+                <!-- Create File Form -->
+                <form id="createFileForm">
+                    <input type="text" class="form-control mb-2" placeholder="Folder Name" required>
+                    <input type="text" class="form-control mb-2" placeholder="File Name" required>
+                    <button type="submit" class="btn btn-primary">Create File</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h2>List of Files</h2>
+
+            <!-- Filter Form -->
+            <form id="filterFilesForm" class="mb-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control mb-2" id="filterFolderName" placeholder="Folder Name"
+                            required>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- File List Table -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="fileListBody">
+                    <!-- Files will be listed here -->
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+                $("#filterFilesForm").submit(function (event) {
+                    event.preventDefault();
+                    const folderName = $("#filterFolderName").val();
+                    loadFileList(folderName);
+                });
+
+                // Create Folder Form Submission
+                $("#createFolderForm").submit(function (event) {
+                    event.preventDefault();
+                    const folderName = $(this).find("input[type='text']").val();
+                    $.post("/directories", { directoryName: folderName }, function (data) {
+                        alert(data);
+                    }).fail(function (error) {
+                        alert("Error: " + error.responseText);
+                    });
+                });
+
+                // Create File Form Submission
+                $("#createFileForm").submit(function (event) {
+                    event.preventDefault();
+                    const folderName = $(this).find("input:eq(0)").val();
+                    const fileName = $(this).find("input:eq(1)").val();
+                    $.post(`/directories/${folderName}/files`, { fileName: fileName }, function (data) {
+                        alert(data);
+                    }).fail(function (error) {
+                        alert("Error: " + error.responseText);
+                    });
+                });
+
+                // Load and display the list of files
+                function loadFileList(directoryName) {
+                    $.get(`/directories/${directoryName}/files`, function (data) {
+                        const fileListBody = $("#fileListBody");
+                        fileListBody.empty();
+
+                        data.forEach(function (fileName) {
+                            const row = $("<tr>");
+                            const cellName = $("<td>").text(fileName);
+                            const cellActions = $("<td>");
+                            const deleteButton = $("<button>")
+                                .addClass("btn btn-danger btn-sm me-2")
+                                .text("Delete")
+                                .click(function () {
+                                    deleteFile(directoryName, fileName);
+                                });
+                            const editButton = $("<button>")
+                                .addClass("btn btn-primary btn-sm")
+                                .text("Edit")
+                                .click(function () {
+                                    editFile(directoryName, fileName);
+                                });
+
+                            cellActions.append(deleteButton, editButton);
+                            row.append(cellName, cellActions);
+                            fileListBody.append(row);
+                        });
+                    }).fail(function (error) {
+                        alert("Error: " + error.responseText);
+                    });
+                }
+
+                // Delete File
+                function deleteFile(directoryName, fileName) {
+                    $.ajax({
+                        url: `/directories/${directoryName}/files/${fileName}`,
+                        type: "DELETE",
+                        success: function () {
+                            loadFileList(directoryName);
+                        },
+                        error: function (error) {
+                            alert("Error: " + error.responseText);
+                        },
+                    });
+                }
+
+                // Edit File
+                function editFile(directoryName, fileName) {
+                    $.get(`/directories/${directoryName}/files/${fileName}`, function (fileContent) {
+                        const editForm = $("<form>").attr("id", "editFileForm");
+                        const contentTextarea = $("<textarea>")
+                            .addClass("form-control mb-2")
+                            .attr("rows", "5")
+                            .val(fileContent);
+                        const saveButton = $("<button>")
+                            .addClass("btn btn-success")
+                            .text("Save")
+                            .click(function () {
+                                saveFile(directoryName, fileName, contentTextarea.val());
+                            });
+
+                        editForm.append(contentTextarea, saveButton);
+                        $("#fileListBody").after(editForm);
+                    }).fail(function (error) {
+                        alert("Error: " + error.responseText);
+                    });
+                }
+
+                // Save File
+                function saveFile(directoryName, fileName, fileContent) {
+                    $.ajax({
+                        url: `/directories/${directoryName}/files/${fileName}`,
+                        type: "PUT",
+                        data: JSON.stringify({ fileContent: fileContent }),
+                        contentType: "application/json",
+                        success: function () {
+                            $("#editFileForm").remove();
+                            loadFileList(directoryName);
+                        },
+                        error: function (error) {
+                            alert("Error: " + error.responseText);
+                        },
+                    });
+                }
+
+                // Load initial file list
+                const initialDirectoryName = "."; // Update with your directory name
+                loadFileList(initialDirectoryName);
+            });
+        </script>
+</body>
+
+</html>
