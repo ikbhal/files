@@ -148,10 +148,17 @@ app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
     // const directoryPath = path.join(DATA_DIR, directoryName);
     const filePath = path.join(directoryPath, fileName);
 
-    // Write the file
-    await fs.writeFile(filePath, fileContent);
+    fs.writeFile(filePath, fileContent, function(error) {
+      if (error) {
+          console.error("Error writing the file: " + error);
+          res.status(500).send('An error occurred while saving the file');
+      } else {
+          console.log("File written successfully.");
+          res.status(200).send('File saved successfully');
+      }
+  });
 
-    res.status(200).send('File saved successfully');
+    
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('An error occurred while saving the file');
