@@ -185,7 +185,7 @@
                                     .addClass("btn btn-primary btn-sm")
                                     .text("Open")
                                     .click(function () {
-                                        loadFileList(entry.name); // Load the content of the subdirectory
+                                        loadFileList(directoryName + '/' + entry.name); // Load the content of the subdirectory
                                     });
 
                                 cellActions.append(openButton);
