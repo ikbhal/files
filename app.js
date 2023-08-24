@@ -70,16 +70,17 @@ app.post('/directories', (req, res) => {
 app.post('/directories/files', (req, res) => {
   // lets accdpt directory in body 
 
-  const directoryName = req.body.directoryName;
-  let directoryPath = '';
-  if(directoryName === 'data') {
-    directoryPath = DATA_DIR;
-  } else {
-    directoryPath = path.join(DATA_DIR, directoryName);
-  }
+  // const directoryName = req.body.directoryName;
+  // let directoryPath = '';
+  // if(directoryName === 'data') {
+  //   directoryPath = DATA_DIR;
+  // } else {
+  //   directoryPath = path.join(DATA_DIR, directoryName);
+  // }
 
-  const fileName = req.body.fileName;
-  const filePath = path.join(directoryPath, fileName);
+  // const fileName = req.body.fileName;
+  // const filePath = path.join(directoryPath, fileName);
+  const filePath = getFilePath(req.body.directoryName, req.body.fileName);
   fs.writeFile(filePath, '', (err) => {
     if (err) {
       console.error(err);
