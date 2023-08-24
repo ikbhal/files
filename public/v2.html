@@ -214,7 +214,7 @@
                 // Delete File
                 function deleteFile(directoryName, fileName) {
                     $.ajax({
-                        url: `/directories/${directoryName}/files/${fileName}`,
+                        url: `/directories/files/${fileName}?directoryName=${directoryName}`,
                         type: "DELETE",
                         success: function () {
                             loadFileList(directoryName);

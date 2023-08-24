@@ -94,17 +94,8 @@ app.post('/directories/files', (req, res) => {
 
 // delete file at diredtory relative to data folde
 // path /directories/<directory>/files/<fileName>, delete method
-app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
-  const directoryName = req.params.directoryName;
-  let directoryPath = '';
-  if(directoryName === 'data') {
-    directoryPath = DATA_DIR;
-  } else {
-    directoryPath = path.join(DATA_DIR, directoryName);
-  }
-
-  const fileName = req.params.fileName;
-  const filePath = path.join(directoryPath, fileName);
+app.delete('/directories/files/:fileName', (req, res) => {
+  const filePath = getFilePath(req.query.directoryName, req.params.fileName);
   fs.unlink(filePath, (err) => {
     if (err) {
       console.error(err);
