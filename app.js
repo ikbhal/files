@@ -25,7 +25,7 @@ app.put('/directories/:diretoryName/files/:oldfileName/rename/:newFileName', (re
   // create newfilepath from directory name, new file name
   const directoryName = req.params.directoryName;
   let directoryPath = '';
-  if(directoryName === '.') {
+  if(directoryName === 'data') {
     directoryPath = DATA_DIR;
   } else {
     directoryPath = path.join(DATA_DIR, directoryName);
@@ -67,7 +67,7 @@ app.post('/directories', (req, res) => {
 app.post('/directories/:directoryName/files', (req, res) => {
   const directoryName = req.params.directoryName;
   let directoryPath = '';
-  if(directoryName === '.') {
+  if(directoryName === 'data') {
     directoryPath = DATA_DIR;
   } else {
     directoryPath = path.join(DATA_DIR, directoryName);
@@ -90,7 +90,7 @@ app.post('/directories/:directoryName/files', (req, res) => {
 app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
   const directoryName = req.params.directoryName;
   let directoryPath = '';
-  if(directoryName === '.') {
+  if(directoryName === 'data') {
     directoryPath = DATA_DIR;
   } else {
     directoryPath = path.join(DATA_DIR, directoryName);
@@ -114,7 +114,7 @@ app.get('/directories/:directoryName/files', (req, res) => {
   const directoryName = req.params.directoryName;
   // check if directory name is . then no need to join with data dir for creating directory path
   let directoryPath = '';
-  if(directoryName === '.') {
+  if(directoryName === 'data') {
     directoryPath = DATA_DIR;
   } else {
     directoryPath = path.join(DATA_DIR, directoryName);
@@ -136,7 +136,7 @@ app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
   try {
     const directoryName = req.params.directoryName;
     let directoryPath = '';
-    if(directoryName === '.') {
+    if(directoryName === 'data') {
       directoryPath = DATA_DIR;
     } else {
       directoryPath = path.join(DATA_DIR, directoryName);
@@ -171,7 +171,7 @@ app.get('/directories/:directoryName/files/:fileName', async (req, res) => {
   try {
     const directoryName = req.params.directoryName;
     let directoryPath = '';
-    if(directoryName === '.') {
+    if(directoryName === 'data') {
       directoryPath = DATA_DIR;
     } else {
       directoryPath = path.join(DATA_DIR, directoryName);
