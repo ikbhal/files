@@ -53,8 +53,9 @@ app.put('/directories/files/:oldfileName/rename/:newFileName', (req, res) => {
 // create diredtory api , accept directory name, create folder at data directory
 // TODOO accept directory in path if possible
 app.post('/directories', (req, res) => {
-  const directoryName = req.body.directoryName;
-  const directoryPath = path.join(DATA_DIR, directoryName);
+  // const directoryName = req.body.directoryName;
+  // const directoryPath = path.join(DATA_DIR, directoryName);
+  const directoryPath = getDirectoryPath(req.body.directoryName);
   fs.mkdir(directoryPath, (err) => {
     if (err) {
       console.error(err);
