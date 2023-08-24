@@ -67,24 +67,7 @@ app.post('/directories/:directoryName/files', (req, res) => {
 });
 
 
-// delete file at diredtory relative to data folder
-// path /directories/<directory>/files/<fileName>, delete method
-app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
-  const directoryName = req.params.directoryName;
-  const fileName = req.params.fileName;
-  const directoryPath = path.join(DATA_DIR, directoryName);
-  const filePath = path.join(directoryPath, fileName);
-  fs.unlink(filePath, (err) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error deleting file');
-    } else {
-      res.status(200).send('File deleted successfully');
-    }
-  });
-});
-
-
+// delete file at diredtory relative to data folde
 // path /directories/<directory>/files/<fileName>, delete method
 app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
   const directoryName = req.params.directoryName;
@@ -105,7 +88,13 @@ app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
 // path /directories/<directory>/files, get method
 app.get('/directories/:directoryName/files', (req, res) => {
   const directoryName = req.params.directoryName;
-  const directoryPath = path.join(DATA_DIR, directoryName);
+  // check if directory name is . then no need to join with data dir for creating directory path
+  let directoryPath = '';
+  if(directoryName === '.') {
+    directoryPath = DATA_DIR;
+  } else {
+    directoryPath = path.join(DATA_DIR, directoryName);
+  }
   fs.readdir(directoryPath, (err, files) => {
     if (err) {
       console.error(err);
@@ -139,6 +128,30 @@ app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
     res.status(500).send('An error occurred while saving the file');
   }
 });
+
+// get file content at directory name, relative to data folder
+// path /directories/<directory>/files/<fileName>, get method
+app.get('/directories/:directoryName/files/:fileName', async (req, res) => {
+  try {
+    const directoryName = req.params.directoryName;
+    const fileName = req.params.fileName;
+    const directoryPath = path.join(DATA_DIR, directoryName);
+    const filePath = path.join(directoryPath, fileName);
+
+    fs.readFile(filePath, 'utf-8', (err, fileContent) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error reading file content');
+      } else {
+        res.send(fileContent);
+      }
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('An error occurred while getting the file content');
+  }
+});
+
 
 
 // ---v2 changes end
