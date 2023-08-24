@@ -26,18 +26,22 @@ app.put('/directories/files/:oldfileName/rename/:newFileName', (req, res) => {
   // read directory name path parameter, check if it is . then use data directory, else create directory path 
   // create oldfilepath from directory name, oldfilename
   // create newfilepath from directory name, new file name
-  const directoryName = req.query.directoryName;
-  let directoryPath = '';
-  if(directoryName === 'data') {
-    directoryPath = DATA_DIR;
-  } else {
-    directoryPath = path.join(DATA_DIR, directoryName);
-  }
+  // const directoryName = req.query.directoryName;
+  // let directoryPath = '';
+  // if(directoryName === 'data') {
+  //   directoryPath = DATA_DIR;
+  // } else {
+  //   directoryPath = path.join(DATA_DIR, directoryName);
+  // }
+  let directoryPath = getDirectoryPath(req.query.directoryName);
   
-  const oldFileName = req.body.oldFileName;
-  const newFileName = req.body.newFileName;
-  const oldFilePath = path.join(directoryPath, oldFileName);
-  const newFilePath = path.join(directoryPath, newFileName);
+  const oldFileName = req.params.oldFileName;
+  const newFileName = req.params.newFileName;
+  // const oldFilePath = path.join(directoryPath, oldFileName);
+  // const newFilePath = path.join(directoryPath, newFileName);
+  const oldFilePath = getFilePath(directoryPath, oldFileName);
+  const newFilePath = getFilePath(directoryPath, newFileName);
+  
   // run rename file command
   fs.rename(oldFilePath, newFilePath, (err) => {
     if (err) {
