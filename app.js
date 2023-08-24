@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const { dir } = require('console');
 const app = express();
 
 app.use(cors());
@@ -117,16 +118,7 @@ app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
 app.get('/directories/files', (req, res) => {
   const directoryName = req.query.directoryName;
 
-  if(directoryName === 'data') {
-    directoryPath = DATA_DIR;
-  } 
-  else if(directoryName.startsWith('data/')) {
-    directoryPath = directoryName;
-  }
-  else {
-    directoryPath = path.join(DATA_DIR, directoryName);
-  }
-
+  let directoryPath = getDirectoryPath(directoryName);
 
   fs.readdir(directoryPath, (err, entries) => {
     if (err) {
@@ -182,21 +174,34 @@ app.put('/directories/files/:fileName', async (req, res) => {
   }
 });
 
+function getDirectoryPath(directoryName)
+{
+  if(directoryName === 'data') {
+    directoryPath = DATA_DIR;
+  } 
+  else if(directoryName.startsWith('data/')) {
+    directoryPath = directoryName;
+  }
+  else {
+    directoryPath = path.join(DATA_DIR, directoryName);
+  }
+  return directoryPath;
+}
+
+function getFilePath(directoryName, fileName){
+  const directoryPath = getDirectoryPath(directoryName);
+  const filePath = path.join(directoryPath, fileName);
+  return filePath;
+}
+
 // get file content at directory name, relative to data folder
 // path /directories/<directory>/files/<fileName>, get method
 app.get('/directories/files/:fileName', async (req, res) => {
   // lets accept directory name in query string
   try {
-    const directoryName = req.query.directoryName;
-    let directoryPath = '';
-    if(directoryName === 'data') {
-      directoryPath = DATA_DIR;
-    } else {
-      directoryPath = path.join(DATA_DIR, directoryName);
-    }
+    const directoryPath = getDirectoryPath(req.query.directoryName);
     const fileName = req.params.fileName;
-    // directoryPath = path.join(DATA_DIR, directoryName);
-    const filePath = path.join(directoryPath, fileName);
+    const filePath = getFilePath(directoryPath, fileName);
 
     fs.readFile(filePath, 'utf-8', (err, fileContent) => {
       if (err) {
