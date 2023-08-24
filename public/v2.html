@@ -116,11 +116,11 @@
                     const folderName = $(this).find("input:eq(0)").val();
                     const fileName = $(this).find("input:eq(1)").val();
 
-                    const requestData = JSON.stringify({ fileName: fileName });
+                    const requestData = JSON.stringify({ fileName: fileName , directoryName: folderName});
 
                     $.ajax({
                         type: "POST",
-                        url: `/directories/${folderName}/files`,
+                        url: `/directories/files`,
                         data: requestData,
                         contentType: "application/json",
                         dataType: "json",

@@ -64,8 +64,10 @@ app.post('/directories', (req, res) => {
 
 // create file at folder api , accept folder directory name relative to data folder, file name 
 // path directories/<directoryName>/files/<fileName>
-app.post('/directories/:directoryName/files', (req, res) => {
-  const directoryName = req.params.directoryName;
+app.post('/directories/files', (req, res) => {
+  // lets accdpt directory in body 
+
+  const directoryName = req.body.directoryName;
   let directoryPath = '';
   if(directoryName === 'data') {
     directoryPath = DATA_DIR;
