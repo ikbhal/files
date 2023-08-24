@@ -183,7 +183,10 @@
                 // Edit File
                 function editFile(directoryName, fileName) {
                     $.get(`/directories/${directoryName}/files/${fileName}`, function (fileContent) {
-                        const editForm = $("<form>").attr("id", "editFileForm");
+                        const editForm = $("#editFileForm");
+                        // clear form editFileform with jquery
+                        editForm.empty();
+                        
                         // create  file name text paragraph in jquery 
                         const fileNameText = $("<p>").text("filename: " + fileName);
                         const contentTextarea = $("<textarea>")
@@ -200,7 +203,7 @@
                             });
 
                         editForm.append(fileNameText,contentTextarea, breakElement, saveButton);
-                        $("#fileListBody").after(editForm);
+                        // $("#fileListBody").after(editForm);
                     }).fail(function (error) {
                         alert("Error: " + error.responseText);
                     });
