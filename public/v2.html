@@ -23,7 +23,7 @@
             <!-- //h2 edit form  -->
             <div class="col-md-6">
                 <h2>Edit file form</h2>
-                <form id="createFolderForm">
+                <form id="editFileForm">
                    
                 </form>
 
@@ -186,7 +186,7 @@
                         const editForm = $("#editFileForm");
                         // clear form editFileform with jquery
                         editForm.empty();
-                        
+
                         // create  file name text paragraph in jquery 
                         const fileNameText = $("<p>").text("filename: " + fileName);
                         const contentTextarea = $("<textarea>")
