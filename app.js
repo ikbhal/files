@@ -117,7 +117,16 @@ app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
 app.get('/directories/files', (req, res) => {
   const directoryName = req.query.directoryName;
 
-  let directoryPath = directoryName === 'data' ? DATA_DIR : path.join(DATA_DIR, directoryName);
+  if(directoryName === 'data') {
+    directoryPath = DATA_DIR;
+  } 
+  else if(directoryName.startsWith('data/')) {
+    directoryPath = directoryName;
+  }
+  else {
+    directoryPath = path.join(DATA_DIR, directoryName);
+  }
+
 
   fs.readdir(directoryPath, (err, entries) => {
     if (err) {
