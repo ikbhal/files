@@ -21,11 +21,10 @@ const FILES_DIR = path.join(__dirname, 'data'); // Directory to store files
 // rename file api  accept old file name, new file name
 // todo fodler support
 app.put('/directories/files/:oldFileName/rename/:newFileName', (req, res) => {
-  let directoryPath = getDirectoryPath(req.query.directoryName);
   const oldFileName = req.params.oldFileName;
   const newFileName = req.params.newFileName;
-  const oldFilePath = getFilePath(directoryPath, oldFileName);
-  const newFilePath = getFilePath(directoryPath, newFileName);
+  const oldFilePath = getFilePath(req.query.directoryName, oldFileName);
+  const newFilePath = getFilePath(req.query.directoryName, newFileName);
 
   // run rename file command
   fs.rename(oldFilePath, newFilePath, (err) => {
