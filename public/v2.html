@@ -136,7 +136,7 @@
 
                 // Load and display the list of files
                 function loadFileList(directoryName) {
-                    $.get(`/directories/${directoryName}/files`, function (data) {
+                    $.get(`/directories/files?directoryName=${directoryName}`, function (data) {
                         const fileListBody = $("#fileListBody");
                         fileListBody.empty();
 

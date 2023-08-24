@@ -110,12 +110,17 @@ app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
 
 // list files at directory relative to data folder
 // path /directories/<directory>/files, get method
-app.get('/directories/:directoryName/files', (req, res) => {
-  const directoryName = req.params.directoryName;
+app.get('/directories/files', (req, res) => {
+
+  // lets accept directory name from body itself, but as query string paramter
+  var directoryName = req.query.directoryName;
+
+  // const directoryName = req.params.directoryName;
   // check if directory name is . then no need to join with data dir for creating directory path
   let directoryPath = '';
   if(directoryName === 'data') {
     directoryPath = DATA_DIR;
+    
   } else {
     directoryPath = path.join(DATA_DIR, directoryName);
   }
