@@ -18,11 +18,23 @@ const FILES_DIR = path.join(__dirname, 'data'); // Directory to store files
 // ----v2 changes start
 
 // rename file api  accept old file name, new file name
-app.put('/renameFile', (req, res) => {
+// todo fodler support
+app.put('/directories/:diretoryName/files/:oldfileName/rename/:newFileName', (req, res) => {
+  // read directory name path parameter, check if it is . then use data directory, else create directory path 
+  // create oldfilepath from directory name, oldfilename
+  // create newfilepath from directory name, new file name
+  const directoryName = req.params.directoryName;
+  let directoryPath = '';
+  if(directoryName === '.') {
+    directoryPath = DATA_DIR;
+  } else {
+    directoryPath = path.join(DATA_DIR, directoryName);
+  }
+  
   const oldFileName = req.body.oldFileName;
   const newFileName = req.body.newFileName;
-  const oldFilePath = path.join(FILES_DIR, oldFileName);
-  const newFilePath = path.join(FILES_DIR, newFileName);
+  const oldFilePath = path.join(directoryPath, oldFileName);
+  const newFilePath = path.join(directoryPath, newFileName);
   // run rename file command
   fs.rename(oldFilePath, newFilePath, (err) => {
     if (err) {
@@ -36,6 +48,7 @@ app.put('/renameFile', (req, res) => {
 
 
 // create diredtory api , accept directory name, create folder at data directory
+// TODOO accept directory in path if possible
 app.post('/directories', (req, res) => {
   const directoryName = req.body.directoryName;
   const directoryPath = path.join(DATA_DIR, directoryName);
@@ -53,8 +66,14 @@ app.post('/directories', (req, res) => {
 // path directories/<directoryName>/files/<fileName>
 app.post('/directories/:directoryName/files', (req, res) => {
   const directoryName = req.params.directoryName;
+  let directoryPath = '';
+  if(directoryName === '.') {
+    directoryPath = DATA_DIR;
+  } else {
+    directoryPath = path.join(DATA_DIR, directoryName);
+  }
+
   const fileName = req.body.fileName;
-  const directoryPath = path.join(DATA_DIR, directoryName);
   const filePath = path.join(directoryPath, fileName);
   fs.writeFile(filePath, '', (err) => {
     if (err) {
@@ -66,13 +85,18 @@ app.post('/directories/:directoryName/files', (req, res) => {
   });
 });
 
-
 // delete file at diredtory relative to data folde
 // path /directories/<directory>/files/<fileName>, delete method
 app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
   const directoryName = req.params.directoryName;
+  let directoryPath = '';
+  if(directoryName === '.') {
+    directoryPath = DATA_DIR;
+  } else {
+    directoryPath = path.join(DATA_DIR, directoryName);
+  }
+
   const fileName = req.params.fileName;
-  const directoryPath = path.join(DATA_DIR, directoryName);
   const filePath = path.join(directoryPath, fileName);
   fs.unlink(filePath, (err) => {
     if (err) {
@@ -111,13 +135,20 @@ app.get('/directories/:directoryName/files', (req, res) => {
 app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
   try {
     const directoryName = req.params.directoryName;
+    let directoryPath = '';
+    if(directoryName === '.') {
+      directoryPath = DATA_DIR;
+    } else {
+      directoryPath = path.join(DATA_DIR, directoryName);
+       // Ensure the directory exists
+      await fs.mkdir(directoryPath, { recursive: true });
+    }
+
+    // const directoryName = req.params.directoryName;
     const fileName = req.params.fileName;
     const fileContent = req.body.fileContent;
-    const directoryPath = path.join(DATA_DIR, directoryName);
+    // const directoryPath = path.join(DATA_DIR, directoryName);
     const filePath = path.join(directoryPath, fileName);
-
-    // Ensure the directory exists
-    await fs.mkdir(directoryPath, { recursive: true });
 
     // Write the file
     await fs.writeFile(filePath, fileContent);
@@ -134,8 +165,14 @@ app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
 app.get('/directories/:directoryName/files/:fileName', async (req, res) => {
   try {
     const directoryName = req.params.directoryName;
+    let directoryPath = '';
+    if(directoryName === '.') {
+      directoryPath = DATA_DIR;
+    } else {
+      directoryPath = path.join(DATA_DIR, directoryName);
+    }
     const fileName = req.params.fileName;
-    const directoryPath = path.join(DATA_DIR, directoryName);
+    // directoryPath = path.join(DATA_DIR, directoryName);
     const filePath = path.join(directoryPath, fileName);
 
     fs.readFile(filePath, 'utf-8', (err, fileContent) => {
@@ -151,8 +188,6 @@ app.get('/directories/:directoryName/files/:fileName', async (req, res) => {
     res.status(500).send('An error occurred while getting the file content');
   }
 });
-
-
 
 // ---v2 changes end
 
