@@ -24,7 +24,7 @@
             <div class="col-md-6">
                 <h2>Edit file form</h2>
                 <form id="editFileForm">
-                   
+
                 </form>
 
             </div>
@@ -116,7 +116,7 @@
                     const folderName = $(this).find("input:eq(0)").val();
                     const fileName = $(this).find("input:eq(1)").val();
 
-                    const requestData = JSON.stringify({ fileName: fileName , directoryName: folderName});
+                    const requestData = JSON.stringify({ fileName: fileName, directoryName: folderName });
 
                     $.ajax({
                         type: "POST",
@@ -134,35 +134,81 @@
                 });
 
 
-                // Load and display the list of files
-                function loadFileList(directoryName) {
-                    $.get(`/directories/files?directoryName=${directoryName}`, function (data) {
+
+                // load list of files, sub directory of given directory name or path
+                function loadList(directoryName) {
+                    const apiUrl = '/directories/files';
+
+                    $.get(apiUrl, { directoryName }, function (data) {
+
                         const fileListBody = $("#fileListBody");
                         fileListBody.empty();
 
-                        data.forEach(function (fileName) {
-                            const row = $("<tr>");
-                            const cellName = $("<td>").text(fileName);
-                            const cellActions = $("<td>");
-                            const deleteButton = $("<button>")
-                                .addClass("btn btn-danger btn-sm me-2")
-                                .text("Delete")
-                                .click(function () {
-                                    deleteFile(directoryName, fileName);
-                                });
-                            const editButton = $("<button>")
-                                .addClass("btn btn-primary btn-sm")
-                                .text("Edit")
-                                .click(function () {
-                                    editFile(directoryName, fileName);
-                                });
+                        data.forEach(entry => {
 
-                            cellActions.append(deleteButton, editButton);
-                            row.append(cellName, cellActions);
-                            fileListBody.append(row);
+                            const row = $("<tr>");
+                            const cellName = $("<td>").text(entry.name);
+                            const cellActions = $("<td>");
+
+                            if (entry.type === 'file') {
+
+
+                                const deleteButton = $("<button>")
+                                    .addClass("btn btn-danger btn-sm me-2")
+                                    .text("Delete")
+                                    .click(function () {
+                                        deleteFile(directoryName, entry.name);
+                                    });
+                                const editButton = $("<button>")
+                                    .addClass("btn btn-primary btn-sm")
+                                    .text("Edit")
+                                    .click(function () {
+                                        editFile(directoryName, entry.name);
+                                    });
+
+                                const renameButton = $("<button>")
+                                    .addClass("btn btn-danger btn-sm me-2")
+                                    .text("Rename")
+                                    .click(function () {
+                                        const newFileName = prompt('Enter new name:');
+                                        if (newFileName) {
+                                            renameFile(entry.name, newFileName, directoryName);
+                                        }
+                                    });
+
+
+                                cellActions.append(deleteButton, editButton, renameButton);
+                                row.append(cellName, cellActions);
+                                fileListBody.append(row);
+                            } else if (entry.type === 'directory') {
+                                const openButton = $('<button>')
+                                    .addClass("btn btn-primary btn-sm")
+                                    .text("Edit")
+                                    .click(function () {
+                                        loadFileList(entry.name); // Load the content of the subdirectory
+                                    });
+
+                                cellActions.append(openButton);
+                                row.append(cellName, cellActions);
+                                fileListBody.append(row);
+                            }
+
+                            $('#entries').append(entryElement);
                         });
-                    }).fail(function (error) {
-                        alert("Error: " + error.responseText);
+                    });
+                }
+
+                // rename file
+                function renameFile(oldFileName, newFileName, directoryName) {
+                    //const apiUrl = '/rename'; // Replace with your rename API endpoint
+                    const apiUrl = `/directories/files/${oldFileName}/rename/${newFileName}?directoryName=${directoryName}`;
+                    ///directories/files/:oldfileName/rename/:newFileName
+
+                    $.post(apiUrl, function (data) {
+                        alert(data); // Display the response message
+                        loadFileList(directoryName); // Reload the file list after renaming
+                    }).fail(function () {
+                        alert('Error renaming file'); // Handle error if the API call fails
                     });
                 }
 
@@ -202,7 +248,7 @@
                                 saveFile(directoryName, fileName, contentTextarea.val());
                             });
 
-                        editForm.append(fileNameText,contentTextarea, breakElement, saveButton);
+                        editForm.append(fileNameText, contentTextarea, breakElement, saveButton);
                         // $("#fileListBody").after(editForm);
                     }).fail(function (error) {
                         alert("Error: " + error.responseText);

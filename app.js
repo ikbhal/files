@@ -25,7 +25,7 @@ app.put('/directories/files/:oldfileName/rename/:newFileName', (req, res) => {
   // read directory name path parameter, check if it is . then use data directory, else create directory path 
   // create oldfilepath from directory name, oldfilename
   // create newfilepath from directory name, new file name
-  const directoryName = req.body.directoryName;
+  const directoryName = req.query.directoryName;
   let directoryPath = '';
   if(directoryName === 'data') {
     directoryPath = DATA_DIR;
@@ -115,25 +115,24 @@ app.delete('/directories/:directoryName/files/:fileName', (req, res) => {
 // list files at directory relative to data folder
 // path /directories/<directory>/files, get method
 app.get('/directories/files', (req, res) => {
+  const directoryName = req.query.directoryName;
 
-  // lets accept directory name from body itself, but as query string paramter
-  var directoryName = req.query.directoryName;
+  let directoryPath = directoryName === 'data' ? DATA_DIR : path.join(DATA_DIR, directoryName);
 
-  // const directoryName = req.params.directoryName;
-  // check if directory name is . then no need to join with data dir for creating directory path
-  let directoryPath = '';
-  if(directoryName === 'data') {
-    directoryPath = DATA_DIR;
-    
-  } else {
-    directoryPath = path.join(DATA_DIR, directoryName);
-  }
-  fs.readdir(directoryPath, (err, files) => {
+  fs.readdir(directoryPath, (err, entries) => {
     if (err) {
       console.error(err);
-      res.status(500).send('Error listing files');
+      res.status(500).send('Error listing entries');
     } else {
-      res.json(files);
+      const entryDetails = entries.map(entry => {
+        const entryPath = path.join(directoryPath, entry);
+        const isDirectory = fs.statSync(entryPath).isDirectory();
+        return {
+          name: entry,
+          type: isDirectory ? 'directory' : 'file'
+        };
+      });
+      res.json(entryDetails);
     }
   });
 });
