@@ -140,8 +140,6 @@ app.put('/directories/:directoryName/files/:fileName', async (req, res) => {
       directoryPath = DATA_DIR;
     } else {
       directoryPath = path.join(DATA_DIR, directoryName);
-       // Ensure the directory exists
-      await fs.mkdir(directoryPath, { recursive: true });
     }
 
     // const directoryName = req.params.directoryName;
