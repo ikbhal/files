@@ -80,25 +80,50 @@
                 // Create Folder Form Submission
                 $("#createFolderForm").submit(function (event) {
                     event.preventDefault();
+
                     const folderName = $(this).find("input[type='text']").val();
-                    $.post("/directories", { directoryName: folderName }, function (data) {
-                        alert(data);
-                    }).fail(function (error) {
-                        alert("Error: " + error.responseText);
+                    const requestData = JSON.stringify({ directoryName: folderName });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/directories",
+                        data: requestData,
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data);
+                        },
+                        error: function (error) {
+                            alert("Error: " + error.responseText);
+                        }
                     });
                 });
+
 
                 // Create File Form Submission
                 $("#createFileForm").submit(function (event) {
                     event.preventDefault();
+
                     const folderName = $(this).find("input:eq(0)").val();
                     const fileName = $(this).find("input:eq(1)").val();
-                    $.post(`/directories/${folderName}/files`, { fileName: fileName }, function (data) {
-                        alert(data);
-                    }).fail(function (error) {
-                        alert("Error: " + error.responseText);
+
+                    const requestData = JSON.stringify({ fileName: fileName });
+
+                    $.ajax({
+                        type: "POST",
+                        url: `/directories/${folderName}/files`,
+                        data: requestData,
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data);
+                        },
+                        error: function (error) {
+                            alert("Error: " + error.responseText);
+                        }
                     });
                 });
+
 
                 // Load and display the list of files
                 function loadFileList(directoryName) {
